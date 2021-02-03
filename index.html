@@ -1,104 +1,87 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
-        <title>Babylon Template</title>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <title>Babylon Template</title>
 
-        <style>
-            html, body {
-                overflow: hidden;
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
+    <link href="style.css" rel="stylesheet">
+    <script src="babylon.js"></script>
+</head>
+
+<body>
+
+<canvas id="render-canvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
+
+<script>
+
+    var canvas = document.getElementById("render-canvas");
+    var engine = new BABYLON.Engine(canvas);
+    var scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+    var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 50, BABYLON.Vector3.Zero(), scene);
+    camera.attachControl(canvas, false);
+
+    var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1, 0), scene);
+    light0.diffuse = new BABYLON.Color3(1, 1, 1);
+    light0.specular = new BABYLON.Color3(1, 1, 1);
+    light0.groundColor = new BABYLON.Color3(0, 0, 0);
+
+    var count = 30;
+    var scale = 4;
+    var halfDist = (count - 1) / 2 * scale;
+    console.log("element count : ", count * count * count);
+
+    var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
+    var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
+    var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
+    var knot03 = BABYLON.Mesh.CreateTorusKnot("knot3", 0.5, 0.2, 16, 8, 2, 3, scene);
+
+    var material1 = new BABYLON.StandardMaterial("colo1", scene);
+    material1.diffuseColor = new BABYLON.Color3(0.49, 0.25, 0);
+    var material2 = material1.clone("colo2");
+    material2.diffuseColor = new BABYLON.Color3(1.0, 0.5, 0.7);
+    var material3 = material1.clone("colo3");
+    material3.diffuseColor = new BABYLON.Color3(0.8, 1.0, 0.7);
+    var material4 = material1.clone("colo4");
+    material4.diffuseColor = new BABYLON.Color3(1.0, 1.0, 1.0);
+
+    knot00.material = material1;
+    knot01.material = material2;
+    knot02.material = material3;
+    knot03.material = material4;
+
+    knot00.setEnabled(false);
+
+    knot00.addLODLevel(15, knot01);
+    knot00.addLODLevel(30, knot02);
+    knot00.addLODLevel(45, knot03);
+    //knot00.addLODLevel(55, null);
+
+    for (var x = 0; x < count; x++) {
+        for (var y = 0; y < count; y++) {
+            for (var z = 0; z < count; z++) {
+                var knot = knot00.createInstance("knotI");
+                knot.position = new BABYLON.Vector3(x * scale - halfDist, y * scale - halfDist, z * scale - halfDist);
             }
+        }
+    }
+    var renderLoop = function () {
+        scene.render();
+        // t -= 0.01;
+        // angle += 0.01;
+        // light.position.x = Math.cos(angle) * 100;
+        // light.position.z = Math.sin(angle) * 100;
+        // camera.position.x = Math.cos(angle);
+        // box.rotation.y = t*2;
+        // torus.scaling.z = Math.abs(Math.sin(t*2))+0.5;
+        // cylinder.position.y = Math.sin(t*3);
+        // light.position.x += 0.1;
+    };
+    engine.runRenderLoop(renderLoop);
+</script>
 
-            #renderCanvas {
-                width: 100%;
-                height: 100%;
-                touch-action: none;
-            }
-        </style>
-
-        <script src="https://cdn.babylonjs.com/babylon.js"></script>
-        <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-    </head>
-
-   <body>
-
-	<canvas id="render-canvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
-
-	<script>
-
-	    var canvas = document.getElementById("render-canvas");
-	    var engine = new BABYLON.Engine(canvas);
-	    var scene = new BABYLON.Scene(engine);
-	    scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-	    var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 50, BABYLON.Vector3.Zero(), scene);
-	    camera.attachControl(canvas, false);
-
-	    var light0 = new BABYLON.HemisphericLight("Hemi0", new BABYLON.Vector3(0, 1, 0), scene);
-	    light0.diffuse = new BABYLON.Color3(1, 1, 1);
-	    light0.specular = new BABYLON.Color3(1, 1, 1);
-	    light0.groundColor = new BABYLON.Color3(0, 0, 0);
-
-	    var count = 30;
-	    var scale = 4;
-	    var halfDist = (count - 1) / 2 * scale;
-	    console.log("element count : ", count * count * count);
-
-	    var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
-	    var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
-	    var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
-	    var knot03 = BABYLON.Mesh.CreateTorusKnot("knot3", 0.5, 0.2, 16, 8, 2, 3, scene);
-
-	    var material1 = new BABYLON.StandardMaterial("colo1", scene);
-	    material1.diffuseColor = new BABYLON.Color3(0.49, 0.25, 0);
-	    var material2 = material1.clone("colo2");
-	    material2.diffuseColor = new BABYLON.Color3(1.0, 0.5, 0.7);
-	    var material3 = material1.clone("colo3");
-	    material3.diffuseColor = new BABYLON.Color3(0.8, 1.0, 0.7);
-	    var material4 = material1.clone("colo4");
-	    material4.diffuseColor = new BABYLON.Color3(1.0, 1.0, 1.0);
-
-	    knot00.material = material1;
-	    knot01.material = material2;
-	    knot02.material = material3;
-	    knot03.material = material4;
-
-	    knot00.setEnabled(false);
-
-	    knot00.addLODLevel(15, knot01);
-	    knot00.addLODLevel(30, knot02);
-	    knot00.addLODLevel(45, knot03);
-	    //knot00.addLODLevel(55, null);
-
-	    for (var x = 0; x < count; x++) {
-		for (var y = 0; y < count; y++) {
-		    for (var z = 0; z < count; z++) {
-			var knot = knot00.createInstance("knotI");
-			knot.position = new BABYLON.Vector3(x * scale - halfDist, y * scale - halfDist, z * scale - halfDist);
-		    }
-		}
-	    }
-	    var renderLoop = function () {
-		scene.render();
-		// t -= 0.01;
-		// angle += 0.01;
-		// light.position.x = Math.cos(angle) * 100;
-		// light.position.z = Math.sin(angle) * 100;
-		// camera.position.x = Math.cos(angle);
-		// box.rotation.y = t*2;
-		// torus.scaling.z = Math.abs(Math.sin(t*2))+0.5;
-		// cylinder.position.y = Math.sin(t*3);
-		// light.position.x += 0.1;
-	    };
-	    engine.runRenderLoop(renderLoop);
-	</script>
-
-   </body>
+</body>
 
 </html>
