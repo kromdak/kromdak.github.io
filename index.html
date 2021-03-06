@@ -1,126 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
-    <title>Babylon Template</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://cdn.babylonjs.com/cannon.js"></script>
+    <script src="https://cdn.babylonjs.com/Oimo.js"></script>
+    <script src="https://cdn.babylonjs.com/ammo.js"></script>
 
-    <link href="style.css" rel="stylesheet">
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-</head>
-
+<script defer src="js/bundle.js"></script></head>
 <body>
-
-<canvas id="render-canvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
-<script src="model.js"></script>
-<script src="meshFactory.js"></script>
-<script src="helper.js"></script>
-<script src="demos.js"></script>
-
-<script>
-
-    let scene = undefined;
-    let camera = undefined;
-    let mainLight = undefined;
-    let wheelDistance = 5.95;
-    let leftWheel = undefined;
-    let rightWheel = undefined;
-    let ev3 = undefined;
-
-    const canvas = document.getElementById("render-canvas");
-    const engine = new BABYLON.Engine(canvas);
-
-    HELPER.createScene(engine);
-    HELPER.createCamera(scene, 30);
-    HELPER.createLights(scene);
-    // const vehicle = new Vehicle(5, 2, 1.5);
-    // const carBody = createVehicleBody(vehicle);
-
-    // BABYLON.MeshBuilder.CreateBox("box", {width: 5, depth: 5, height: 5}, scene);
-
-    leftWheel = new BABYLON.TransformNode("leftWheel");
-    rightWheel = new BABYLON.TransformNode("rightWheel");
-    ev3 = new BABYLON.TransformNode("ev3");
-
-    loadEV3Body();
-    loadEV3Wheels();
-
-    scene.registerAfterRender(function () {
-        if(leftWheel !== undefined && rightWheel !== undefined) {
-            leftWheel.rotate(BABYLON.Axis.X, -0.04, BABYLON.Space.WORLD);
-            rightWheel.rotate(BABYLON.Axis.X, -0.04, BABYLON.Space.WORLD);
-        }
-    });
-
-    // const points = createCarPath();
-    // createCarAnimation();
-    engine.runRenderLoop(renderLoop);
-
-    function renderLoop() {
-        scene.render();
-    }
-
-    function loadEV3Body(){
-        // Loads structure
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_structure.glb", scene, function (newMeshes) {
-            const structure = newMeshes[0];
-            structure.parent = ev3;
-            structure.position = new BABYLON.Vector3(0, 6.14804, 2.63665);
-        });
-
-        // Loads brick
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_brick.glb", scene, function (newMeshes) {
-            const structure = newMeshes[0];
-            structure.parent = ev3;
-            structure.position = new BABYLON.Vector3(0, 10.19805, 3.19668);
-        });
-
-        // Loads clips
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_clips.glb", scene, function (newMeshes) {
-            const structure = newMeshes[0];
-            structure.parent = ev3;
-            structure.position = new BABYLON.Vector3(0, 6.83879, 2.56352);
-        });
-
-        // Loads ultrasonic sensor
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_ultrasonic.glb", scene, function (newMeshes) {
-            const ultrasonic = newMeshes[0];
-            ultrasonic.parent = ev3;
-            ultrasonic.position = new BABYLON.Vector3(0, 2.41806, -3.64434);
-        });
-
-        // Loads color sensor
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_color.glb", scene, function (newMeshes) {
-            const color = newMeshes[0];
-            color.parent = ev3;
-            color.position = new BABYLON.Vector3(5.57809, 2.6548, -5.92201);
-        });
-
-        // Loads motors
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_motor.glb", scene, function (newMeshes) {
-            const leftMotor = BABYLON.Mesh.MergeMeshes([newMeshes[1], newMeshes[2], newMeshes[3], newMeshes[4]], true, true, undefined, false, true);
-            leftMotor.parent = ev3;
-            leftMotor.position = new BABYLON.Vector3(2.40597, 4.40292, 4.19073);
-            const rightMotor = leftMotor.createInstance();
-            rightMotor.position = new BABYLON.Vector3(-2.40597, 4.40292, 4.19073);
-        });
-    }
-
-    function loadEV3Wheels(){
-        // Loads wheels
-        BABYLON.SceneLoader.ImportMesh("", "resources/", "ev3_wheel.glb", scene, function (newMeshes) {
-            leftWheel = BABYLON.Mesh.MergeMeshes([newMeshes[1], newMeshes[2], newMeshes[3]], true, true, undefined, false, true);
-            leftWheel.position = new BABYLON.Vector3(5.95316, 2.81535, 0.03433);
-            rightWheel = leftWheel.createInstance();
-            rightWheel.position = new BABYLON.Vector3(-5.95316, 2.81535, 0.03433);
-            rightWheel.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.WORLD);
-        });
-    }
-
-</script>
-
 </body>
-
 </html>
